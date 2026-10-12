@@ -15,6 +15,7 @@ A unified, asynchronous Python fetching library designed for web scraping and AP
   - `fetch_static`: Lightweight static HTML fetching with automatic redirect following.
   - `fetch_dynamic`: Full headless Chromium browser execution via Playwright for dynamic SPAs and client-side rendered content.
 - **REST API Ready**: Built-in JSON request handling with defaults for headers, query params, and request payloads.
+- **File Downloads**: `download_file` streams files to disk, creates parent directories, and supports reusing an HTTP client.
 - **Session & Context Persistence**:
   - GUI helper (`save_context_gui`) to interactively log into websites and save session storage/cookies.
   - Re-inject authenticated states into headless scraping jobs.
@@ -26,7 +27,15 @@ A unified, asynchronous Python fetching library designed for web scraping and AP
 
 ### 1. Install via pip
 
-Clone the repository and install dependencies:
+Install directly from GitHub (requires Git):
+
+```bash
+pip install git+https://github.com/USERNAME/fetching-library-python.git
+```
+
+Replace `USERNAME` with the repository owner's GitHub username.
+
+Alternatively, clone the repository and install it in editable mode:
 
 ```bash
 git clone https://github.com/your-username/fetching-library-python.git
@@ -181,6 +190,39 @@ asyncio.run(main())
 
 ---
 
+### 5. Downloading Files
+
+Stream a file to a destination given as a string or `Path`. Parent directories are created automatically, and an existing destination file is overwritten:
+
+```python
+import asyncio
+from pathlib import Path
+import httpx
+from core import FetchingHelper
+
+
+async def main():
+    await FetchingHelper.download_file(
+        url="https://example.com/file.pdf",
+        path=Path("downloads/file.pdf"),
+    )
+
+    # Reuse a client for multiple downloads.
+    async with httpx.AsyncClient(timeout=60) as client:
+        await FetchingHelper.download_file(
+            url="https://example.com/image.png",
+            path="downloads/image.png",
+            client=client,
+        )
+
+
+asyncio.run(main())
+```
+
+The method returns `None` on success and raises `httpx.HTTPError` for HTTP status or network errors. When no client is supplied, it creates a client with a 60-second timeout and closes it afterward. A supplied client stays open for reuse.
+
+---
+
 ## Core Architecture
 
 ### `FetchResult`
@@ -194,6 +236,8 @@ A unified data structure returned across all fetch methods:
 
 ### `FetchingHelper`
 Static utility class exposing:
+
+- `download_file(url, path, client=None)`
 - `fetch_static(url, timeout=10)`
 - `fetch_api(url, method="GET", headers=None, params=None, json_data=None, timeout=10)`
 - `fetch_dynamic(url, context_file=None, browser=None, wait_for_state="", wait_for_timer_ms=0)`
