@@ -30,7 +30,7 @@ A unified, asynchronous Python fetching library designed for web scraping and AP
 Install directly from GitHub (requires Git):
 
 ```bash
-pip install git+https://github.com/USERNAME/fetching-library-python.git
+pip install git+https://github.com/sol239/fetching-library-python.git
 ```
 
 Replace `USERNAME` with the repository owner's GitHub username.
