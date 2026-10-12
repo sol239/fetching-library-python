@@ -14,6 +14,26 @@ BROWSER_PATH = os.environ.get("BROWSER_PATH", "/usr/bin/chromium")
 
 class FetchingHelper:
     @staticmethod
+    async def download_file(
+        url: str,
+        path: str | Path,
+        client: httpx.AsyncClient | None = None,
+    ) -> None:
+        """Stream a file to disk, leaving a supplied client open."""
+        if client is None:
+            async with httpx.AsyncClient(timeout=60) as client:
+                await FetchingHelper.download_file(url, path, client)
+            return
+
+        async with client.stream("GET", url=url) as response:
+            response.raise_for_status()
+            path = Path(path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("wb") as file:
+                async for chunk in response.aiter_bytes():
+                    file.write(chunk)
+
+    @staticmethod
     async def fetch_static(url: str, timeout: int = 10) -> FetchResult:
         try:
             async with httpx.AsyncClient(follow_redirects=True) as client:
