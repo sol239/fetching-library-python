@@ -1,12 +1,15 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 from playwright.async_api import Browser, async_playwright
+from playwright.async_api import Error as PlaywrightError
 
 from .FetchResult import FetchResult
+
+LoadState = Literal["domcontentloaded", "load", "networkidle"]
 
 CONTEXT_FILE = Path("context.json")
 BROWSER_PATH = os.environ.get("BROWSER_PATH", "/usr/bin/chromium")
@@ -34,7 +37,9 @@ class FetchingHelper:
                     file.write(chunk)
 
     @staticmethod
-    async def fetch_static(url: str, timeout: int = 10) -> FetchResult:
+    async def fetch_static(
+        url: str, timeout: float | httpx.Timeout = 10.0
+    ) -> FetchResult:
         try:
             async with httpx.AsyncClient(follow_redirects=True) as client:
                 response = await client.get(url, timeout=timeout)
@@ -85,7 +90,7 @@ class FetchingHelper:
         url: str,
         context_file: Path | None = None,
         browser: Browser | None = None,
-        wait_for_state: str = "",
+        wait_for_state: LoadState | None = None,
         wait_for_timer_ms: int = 0,
     ) -> FetchResult:
 
@@ -114,11 +119,7 @@ class FetchingHelper:
             if wait_for_timer_ms > 0:
                 await page.wait_for_timeout(wait_for_timer_ms)
 
-            if wait_for_state in {
-                "domcontentloaded",
-                "load",
-                "networkidle",
-            }:
+            if wait_for_state is not None:
                 await page.wait_for_load_state(wait_for_state)
 
             html = await page.content()
@@ -128,7 +129,7 @@ class FetchingHelper:
                 content=html,
             )
 
-        except Exception as e:
+        except PlaywrightError as e:
             return FetchResult(
                 is_success=False,
                 content=str(e),
@@ -152,7 +153,7 @@ class FetchingHelper:
         headers: dict[str, str] | None = None,
         params: dict[str, Any] | None = None,
         json_data: dict[str, Any] | list[Any] | None = None,
-        timeout: int = 10,
+        timeout: float | httpx.Timeout = 10.0,
     ) -> FetchResult:
         # Default REST headers
         default_headers = {

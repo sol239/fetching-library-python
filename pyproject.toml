@@ -24,5 +24,8 @@ dev = [
 where = ["."]
 include = ["core*"]
 
+[tool.setuptools.package-data]
+core = ["py.typed"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
