@@ -22,10 +22,10 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*"]
+include = ["fetching_library_python*"]
 
 [tool.setuptools.package-data]
-core = ["py.typed"]
+fetching_library_python = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

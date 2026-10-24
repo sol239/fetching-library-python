@@ -79,7 +79,7 @@ Fetch standard web pages quickly without the overhead of a headless browser:
 
 ```python
 import asyncio
-from core import FetchingHelper, FetchResult
+from fetching_library_python import FetchingHelper, FetchResult
 
 
 async def main():
@@ -104,7 +104,7 @@ Make GET, POST, PUT, or DELETE requests with JSON serialization and default API 
 ```python
 import asyncio
 import json
-from core import FetchingHelper, FetchResult
+from fetching_library_python import FetchingHelper, FetchResult
 
 
 async def main():
@@ -131,7 +131,7 @@ Scrape modern Single Page Applications (SPAs) that require JavaScript execution:
 
 ```python
 import asyncio
-from core import FetchingHelper, FetchResult
+from fetching_library_python import FetchingHelper, FetchResult
 
 
 async def main():
@@ -158,7 +158,7 @@ Bypass login walls, multi-factor authentication (MFA), or CAPTCHAs interactively
 ```python
 import asyncio
 from pathlib import Path
-from core import FetchingHelper
+from fetching_library_python import FetchingHelper
 
 # Opens an interactive browser window. Log in manually, then press Enter in terminal.
 asyncio.run(
@@ -173,7 +173,7 @@ asyncio.run(
 ```python
 import asyncio
 from pathlib import Path
-from core import FetchingHelper, FetchResult
+from fetching_library_python import FetchingHelper, FetchResult
 
 
 async def main():
@@ -198,7 +198,7 @@ Stream a file to a destination given as a string or `Path`. Parent directories a
 import asyncio
 from pathlib import Path
 import httpx
-from core import FetchingHelper
+from fetching_library_python import FetchingHelper
 
 
 async def main():

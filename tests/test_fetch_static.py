@@ -1,8 +1,8 @@
 import pytest
 
 
-from core import FetchResult
-from core import FetchingHelper
+from fetching_library_python import FetchResult
+from fetching_library_python import FetchingHelper
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,7 @@
 import json
 import pytest
 
-from core import FetchResult, FetchingHelper
+from fetching_library_python import FetchResult, FetchingHelper
 
 
 @pytest.mark.asyncio
